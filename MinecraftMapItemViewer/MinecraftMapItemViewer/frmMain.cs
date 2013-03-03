@@ -1,4 +1,6 @@
-﻿using System;
+﻿//REF:  http://www.minecraftwiki.net/wiki/Map_Item_Format
+//      http://www.minecraftwiki.net/wiki/NBT_Format
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,41 +23,51 @@ namespace MinecraftMapItemViewer
         {
             this.Text = "Minecraft Map Item Viewer";
             lblFilename.Text = "No Map Item file selected!";
-            Program.Log("Main Form loaded.");
+            btnSave.Enabled = false;
+            Logging.Log("Main Form loaded.");
         }
 
         private void frmMain_HelpButtonClicked(object sender, CancelEventArgs e)
         {
-            MessageBox.Show("turdburglar");
+            MessageBox.Show("TODO: this.");
             //TODO: Create About form, have button to open log
             e.Cancel = true;
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            Program.Log("btnOpen clicked");
+            Logging.Log("btnOpen clicked");
             BrowseDialog frmd = new BrowseDialog();
             BrowseDialog.BrowseForOptions bdOptions = BrowseDialog.BrowseForOptions.BrowseIncludeFiles;
             bdOptions = bdOptions | BrowseDialog.BrowseForOptions.UseNewUI;
             bdOptions = bdOptions | BrowseDialog.BrowseForOptions.NoNewFolderButton;
             bdOptions = bdOptions | BrowseDialog.BrowseForOptions.ReturnOnlyFileSystemDirectories;
-
             frmd.BrowseFor = bdOptions;
             frmd.Title = "Select a file or folder";
             if (frmd.ShowDialog(this) == DialogResult.OK)
             {
-                Program.Log("User selected " + frmd.Selected);
+                Logging.Log("User selected " + frmd.Selected);
+                if (Program.IsDirectory(frmd.Selected))
+                {
+                    //TODO: Create other interface for loading multiple maps
+                }
+                else
+                {
+                    MCMapItem MapItem = new MCMapItem(Program.UnGZIPFile(frmd.Selected));
+                    Logging.Log("The scale is " + MapItem.Scale);
+                    Logging.Log("The dimension is " + MapItem.Dimension);
+                }
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            Program.Log("btnSave clicked");
+            Logging.Log("btnSave clicked");
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Program.Log("Main Form closing...");
+            Logging.Log("Main Form closing...");
         }
     }
 }

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.IO.Compression;
 
 namespace MinecraftMapItemViewer
 {
@@ -17,62 +19,58 @@ namespace MinecraftMapItemViewer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Log("Program Started");
+            Logging.Log("Program Started");
             Application.Run(new frmMain());
 
-            Log("Program Exiting...");
+            Logging.Log("Program Exiting...");
         }
 
-        [Flags]
-        public enum LoggingLocations{
-            None = 0,
-            DebugPrint =    1 << 0, //1 There's no real reason to do it this way
-            LogFile =       1 << 1, //2 other than to serve as an excercise in
-            MessageBox =    1 << 2, //4 bit shifting.
-            TheRainforest = 1 << 3, //8
-
-            Default = DebugPrint | LogFile //<-- Config me
-        }
-
-        /// <summary>
-        /// Log message to various places
-        /// </summary>
-        /// <param name="strMessage">Message to log</param>
-        /// <param name="logLocation">Where to log</param>
-        public static void Log(string strMessage, LoggingLocations logLocation)
+        public static Boolean IsDirectory(string strFilePath)
         {
-            if ((logLocation & LoggingLocations.DebugPrint) == LoggingLocations.DebugPrint)
+            FileAttributes attr = File.GetAttributes(strFilePath);
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                Debug.WriteLine(strMessage);
+                return true;
             }
-            if ((logLocation & LoggingLocations.LogFile) == LoggingLocations.LogFile)
+            else
             {
-                try
+                return false;
+            }
+        }
+
+        public static byte[] UnGZIPFile(string strFileName)
+        {
+            Logging.Log("Opening " + strFileName + " ...");
+            byte[] compressed = File.ReadAllBytes(strFileName);
+            Logging.Log("Compressed size: " + compressed.Length);
+            Logging.Log("Decompressing...");
+            byte[] decompressed = Decompress(compressed);
+            Logging.Log("Decompressed size: " + decompressed.Length);
+            return decompressed;
+        }
+
+        private static byte[] Decompress(byte[] compressed)
+        {
+            using (GZipStream stream = new GZipStream(new MemoryStream(compressed), CompressionMode.Decompress))
+            {
+                const int size = 4096;
+                byte[] buffer = new byte[size];
+                using (MemoryStream memory = new MemoryStream())
                 {
-                    string strLogFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".log";
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(strLogFileName, true))
+                    int count = 0;
+                    do
                     {
-                        file.WriteLine(DateTime.Now.ToString() + " - " + strMessage);
-                    }
+                        count = stream.Read(buffer, 0, size);
+                        if (count > 0)
+                        {
+                            memory.Write(buffer, 0, count);
+                        }
+                    } while (count > 0);
+                    return memory.ToArray();
                 }
-                catch
-                {
-                    MessageBox.Show("Error writing to log file!");
-                }
-            }
-            if ((logLocation & LoggingLocations.MessageBox) == LoggingLocations.MessageBox)
-            {
-                MessageBox.Show(strMessage);
             }
         }
 
-        /// <summary>
-        /// Logs message to default location(s)
-        /// </summary>
-        /// <param name="strMessage">Message to log</param>
-        public static void Log(string strMessage)
-        {
-            Log(strMessage, LoggingLocations.Default);
-        }
+        
     }
 }

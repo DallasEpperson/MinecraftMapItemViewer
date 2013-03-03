@@ -44,7 +44,7 @@ namespace MinecraftMapItemViewer
             DontGoBelowDomain               = 1 << 1,
             StatusText                      = 1 << 2,
             ReturnFileSystemAncestors       = 1 << 3,
-            EditBox                         = 1 << 4,
+            EditBox                         = 1 << 4, 
             Validate                        = 1 << 5,
             NewDialogStyle                  = 1 << 6,
             BrowseIncludeURLs               = 1 << 7,
@@ -61,7 +61,6 @@ namespace MinecraftMapItemViewer
 
         }
 
-        //private BrowseForTypes m_BrowseFor = BrowseForTypes.Directories;
         private BrowseForOptions m_BrowseFor = BrowseForOptions.ReturnOnlyFileSystemDirectories;
         private string m_Title = "";
         private string m_Selected = "";
