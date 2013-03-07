@@ -56,6 +56,10 @@ namespace MinecraftMapItemViewer
                     MCMapItem MapItem = new MCMapItem(Program.UnGZIPFile(frmd.Selected));
                     Logging.Log("The scale is " + MapItem.Scale);
                     Logging.Log("The dimension is " + MapItem.Dimension);
+                    Logging.Log("The height is " + MapItem.Height);
+                    Logging.Log("The width is " + MapItem.Width);
+                    Logging.Log("The xCenter is " + MapItem.xCenter);
+                    Logging.Log("The zCenter is " + MapItem.zCenter);
                 }
             }
         }
