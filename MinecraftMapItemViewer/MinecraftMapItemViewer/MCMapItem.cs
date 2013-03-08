@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ namespace MinecraftMapItemViewer
 {
     public class MCMapItem
     {
+        private Dictionary<int, Color> _colorTable;
         
         private byte _scale;
         private byte _dimension;
@@ -19,12 +22,76 @@ namespace MinecraftMapItemViewer
 
         public MCMapItem(byte[] wholeArray)
         {
+            BuildColorTable();
             _scale = wholeArray.GetByte("scale");
             _dimension = wholeArray.GetByte("dimension");
             _height = wholeArray.GetShort("height");
             _width = wholeArray.GetShort("width");
             _xCenter = wholeArray.GetInt("xCenter");
             _zCenter = wholeArray.GetInt("zCenter");
+            _colors = wholeArray.GetByteArray("colors");
+        }
+
+        private void BuildColorTable()
+        {
+            _colorTable = new Dictionary<int,Color>();
+            _colorTable.Add(0, Color.FromArgb(0, 0, 0, 0));
+            _colorTable.Add(1, Color.FromArgb(0, 0, 0, 0));
+            _colorTable.Add(2, Color.FromArgb(0, 0, 0, 0));
+            _colorTable.Add(3, Color.FromArgb(0, 0, 0, 0));
+            _colorTable.Add(4, Color.FromArgb(0, 89, 125, 39));
+            _colorTable.Add(5, Color.FromArgb(0, 109, 153, 48));
+            _colorTable.Add(6, Color.FromArgb(0, 127, 178, 56));
+            _colorTable.Add(7, Color.FromArgb(0, 109, 153, 48));
+            _colorTable.Add(8, Color.FromArgb(0, 174, 164, 115));
+            _colorTable.Add(9, Color.FromArgb(0, 213, 201, 140));
+            _colorTable.Add(10, Color.FromArgb(0, 247, 233, 163));
+            _colorTable.Add(11, Color.FromArgb(0, 213, 201, 140));
+            _colorTable.Add(12, Color.FromArgb(0, 117, 117, 117));
+            _colorTable.Add(13, Color.FromArgb(0, 144, 144, 144));
+            _colorTable.Add(14, Color.FromArgb(0, 167, 167, 167));
+            _colorTable.Add(15, Color.FromArgb(0, 144, 144, 144));
+            _colorTable.Add(16, Color.FromArgb(0, 180, 0, 0));
+            _colorTable.Add(17, Color.FromArgb(0, 220, 0, 0));
+            _colorTable.Add(18, Color.FromArgb(0, 255, 0, 0));
+            _colorTable.Add(19, Color.FromArgb(0, 220, 0, 0));
+            _colorTable.Add(20, Color.FromArgb(0, 112, 112, 180));
+            _colorTable.Add(21, Color.FromArgb(0, 138, 138, 220));
+            _colorTable.Add(22, Color.FromArgb(0, 160, 160, 255));
+            _colorTable.Add(23, Color.FromArgb(0, 138, 138, 220));
+            _colorTable.Add(24, Color.FromArgb(0, 117, 117, 117));
+            _colorTable.Add(25, Color.FromArgb(0, 144, 144, 144));
+            _colorTable.Add(26, Color.FromArgb(0, 167, 167, 167));
+            _colorTable.Add(27, Color.FromArgb(0, 144, 144, 144));
+            _colorTable.Add(28, Color.FromArgb(0, 0, 87, 0));
+            _colorTable.Add(29, Color.FromArgb(0, 0, 106, 0));
+            _colorTable.Add(30, Color.FromArgb(0, 0, 124, 0));
+            _colorTable.Add(31, Color.FromArgb(0, 0, 106, 0));
+            _colorTable.Add(32, Color.FromArgb(0, 180, 180, 180));
+            _colorTable.Add(33, Color.FromArgb(0, 220, 220, 220));
+            _colorTable.Add(34, Color.FromArgb(0, 255, 255, 255));
+            _colorTable.Add(35, Color.FromArgb(0, 220, 220, 220));
+            _colorTable.Add(36, Color.FromArgb(0, 115, 118, 129));
+            _colorTable.Add(37, Color.FromArgb(0, 141, 144, 158));
+            _colorTable.Add(38, Color.FromArgb(0, 164, 168, 184));
+            _colorTable.Add(39, Color.FromArgb(0, 141, 144, 158));
+            _colorTable.Add(40, Color.FromArgb(0, 129, 74, 33));
+            _colorTable.Add(41, Color.FromArgb(0, 157, 91, 40));
+            _colorTable.Add(42, Color.FromArgb(0, 183, 106, 47));
+            _colorTable.Add(43, Color.FromArgb(0, 157, 91, 40));
+            _colorTable.Add(44, Color.FromArgb(0, 79, 79, 79));
+            _colorTable.Add(45, Color.FromArgb(0, 96, 96, 96));
+            _colorTable.Add(46, Color.FromArgb(0, 112, 112, 112));
+            _colorTable.Add(47, Color.FromArgb(0, 96, 96, 96));
+            _colorTable.Add(48, Color.FromArgb(0, 45, 45, 180));
+            _colorTable.Add(49, Color.FromArgb(0, 55, 55, 220));
+            _colorTable.Add(50, Color.FromArgb(0, 64, 64, 255));
+            _colorTable.Add(51, Color.FromArgb(0, 55, 55, 220));
+            _colorTable.Add(52, Color.FromArgb(0, 73, 58, 35));
+            _colorTable.Add(53, Color.FromArgb(0, 89, 71, 43));
+            _colorTable.Add(54, Color.FromArgb(0, 104, 83, 50));
+            _colorTable.Add(55, Color.FromArgb(0, 89, 71, 43));
+
         }
 
         #region Properties
@@ -76,11 +143,39 @@ namespace MinecraftMapItemViewer
             }
         }
 
-        public byte[] Colors
+        public Color[,] Colors
         {
             get
             {
-                return _colors;
+                Color[,] returnArray = new Color[_width, _height];
+                int i = 0;
+                for (int y = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++)
+                    {
+                        returnArray[x, y] = _colorTable[_colors[i]];
+                        i++;
+                    }
+                }
+                return returnArray;
+            }
+        }
+
+        public Bitmap Image
+        {
+            get
+            {
+                Bitmap bmp = new Bitmap(_width, _height);
+                int i = 0;
+                for (int y = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++)
+                    {
+                        bmp.SetPixel(x, y, _colorTable[_colors[i]]);
+                        i++;
+                    }
+                }
+                return bmp;
             }
         }
 
@@ -144,6 +239,21 @@ namespace MinecraftMapItemViewer
             byte[] quadArray = wholeArray.SubArray(locationOfInt, 4); // Get the four bytes that make up an int,
             Array.Reverse(quadArray); // and reverse them
             return BitConverter.ToInt32(quadArray, 0);
+        }
+
+        public static byte[] GetByteArray(this byte[] wholeArray, string strTagName)
+        {
+            int ArraySize;
+            byte[] searchArray = { Tags.NBT_Byte_Array }; // One tag byte
+            Extensions.Append(ref searchArray, new byte[] { // Two bytes for length of tag name
+                (byte)(Encoding.UTF8.GetByteCount(strTagName) >> 8), 
+                (byte)Encoding.UTF8.GetByteCount(strTagName) });
+            Extensions.Append(ref searchArray, Encoding.UTF8.GetBytes(strTagName)); // Tag name
+            int locationOfInt = wholeArray.IndexOf(searchArray) + searchArray.Length;
+            byte[] quadArray = wholeArray.SubArray(locationOfInt, 4); // Get the four bytes that make up an int,
+            Array.Reverse(quadArray); // and reverse them
+            ArraySize = BitConverter.ToInt32(quadArray, 0); // gives us the size of our array.
+            return wholeArray.SubArray((locationOfInt + 4), ArraySize);
         }
 
 

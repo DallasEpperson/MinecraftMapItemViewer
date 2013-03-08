@@ -51,23 +51,31 @@ namespace MinecraftMapItemViewer
 
         private static byte[] Decompress(byte[] compressed)
         {
-            using (GZipStream stream = new GZipStream(new MemoryStream(compressed), CompressionMode.Decompress))
+            try
             {
-                const int size = 4096;
-                byte[] buffer = new byte[size];
-                using (MemoryStream memory = new MemoryStream())
+                using (GZipStream stream = new GZipStream(new MemoryStream(compressed), CompressionMode.Decompress))
                 {
-                    int count = 0;
-                    do
+                    const int size = 4096;
+                    byte[] buffer = new byte[size];
+                    using (MemoryStream memory = new MemoryStream())
                     {
-                        count = stream.Read(buffer, 0, size);
-                        if (count > 0)
+                        int count = 0;
+                        do
                         {
-                            memory.Write(buffer, 0, count);
-                        }
-                    } while (count > 0);
-                    return memory.ToArray();
+                            count = stream.Read(buffer, 0, size);
+                            if (count > 0)
+                            {
+                                memory.Write(buffer, 0, count);
+                            }
+                        } while (count > 0);
+                        return memory.ToArray();
+                    }
                 }
+            }
+            catch (InvalidDataException durr)
+            {
+                Logging.Log("File is not GZipped!");
+                return compressed;
             }
         }
 

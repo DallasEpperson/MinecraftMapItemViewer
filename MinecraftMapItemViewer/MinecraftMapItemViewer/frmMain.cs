@@ -60,6 +60,16 @@ namespace MinecraftMapItemViewer
                     Logging.Log("The width is " + MapItem.Width);
                     Logging.Log("The xCenter is " + MapItem.xCenter);
                     Logging.Log("The zCenter is " + MapItem.zCenter);
+                    Logging.Log("The color array is " + MapItem.Colors.Length + " long.");
+                    Logging.Log("0,0 is " + MapItem.Colors[0, 0]);
+                    Logging.Log("1,0 is " + MapItem.Colors[1, 0]);
+                    Logging.Log("127,128 is " + MapItem.Colors[126, 127]);
+                    Logging.Log("128,128 is " + MapItem.Colors[127, 127]);
+                    Bitmap temp = MapItem.Image;
+                    temp.Save(frmd.Selected + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                    temp.Save(frmd.Selected + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                    temp.Save(frmd.Selected + ".gif", System.Drawing.Imaging.ImageFormat.Gif);
+                    picMapImage.Image = temp; //TODO: This don't work. Why?
                 }
             }
         }

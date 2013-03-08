@@ -38,7 +38,7 @@
             // 
             // picMapImage
             // 
-            this.picMapImage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.picMapImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picMapImage.Location = new System.Drawing.Point(143, 39);
             this.picMapImage.Name = "picMapImage";
             this.picMapImage.Size = new System.Drawing.Size(128, 128);
