@@ -72,7 +72,7 @@ namespace MinecraftMapItemViewer
                     }
                 }
             }
-            catch (InvalidDataException durr)
+            catch (InvalidDataException)
             {
                 Logging.Log("File is not GZipped!");
                 return compressed;
