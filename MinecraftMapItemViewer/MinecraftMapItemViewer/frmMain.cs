@@ -14,6 +14,8 @@ namespace MinecraftMapItemViewer
 {
     public partial class frmMain : Form
     {
+        string strOpenFilename;
+
         public frmMain()
         {
             InitializeComponent();
@@ -46,10 +48,14 @@ namespace MinecraftMapItemViewer
             frmd.Title = "Select a file or folder";
             if (frmd.ShowDialog(this) == DialogResult.OK)
             {
-                Logging.Log("User selected " + frmd.Selected);
-                if (Program.IsDirectory(frmd.Selected))
+                strOpenFilename = frmd.Selected;
+                Logging.Log("User selected " + strOpenFilename);
+                lblFilename.Text = strOpenFilename;
+
+                if (Program.IsDirectory(strOpenFilename))
                 {
                     //TODO: Create other interface for loading multiple maps
+                    //Open it modally
                 }
                 else
                 {
@@ -61,6 +67,7 @@ namespace MinecraftMapItemViewer
                     Logging.Log("The xCenter is " + MapItem.xCenter);
                     Logging.Log("The zCenter is " + MapItem.zCenter);
                     picMapImage.Image = MapItem.Image;
+                    btnSave.Enabled = true;
                 }
             }
         }
@@ -68,6 +75,9 @@ namespace MinecraftMapItemViewer
         private void btnSave_Click(object sender, EventArgs e)
         {
             Logging.Log("btnSave clicked");
+            //TODO: Save file dialog with all options of system.drawing.imaging.imageformat
+            //but for now, ...
+            picMapImage.Image.Save(strOpenFilename + ".png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
