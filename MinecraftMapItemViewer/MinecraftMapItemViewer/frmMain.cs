@@ -84,5 +84,11 @@ namespace MinecraftMapItemViewer
         {
             Logging.Log("Main Form closing...");
         }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Logging.Log("btnExit clicked");
+            this.Close();
+        }
     }
 }
